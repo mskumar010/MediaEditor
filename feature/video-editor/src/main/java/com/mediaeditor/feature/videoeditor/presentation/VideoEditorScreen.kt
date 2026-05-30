@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.media3.ui.PlayerView
+import com.mediaeditor.core.router.CropRect
 import com.mediaeditor.core.router.VideoFormat
 import com.mediaeditor.core.ui.components.HybridCard
 import com.mediaeditor.core.ui.components.HybridPrimaryButton
@@ -152,6 +153,56 @@ fun VideoEditorScreen(
                                     steps = 3
                                 )
                                 Text("Speed", style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        HybridCard(modifier = Modifier.weight(1f)) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text("Mute Audio", style = MaterialTheme.typography.bodyMedium)
+                                Switch(
+                                    checked = proj.muteAudio,
+                                    onCheckedChange = { viewModel.updateMuteAudio(it) }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    HybridSectionHeader(title = "Crop Ratio")
+                    HybridCard(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        FlowRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            val crops = listOf(
+                                "Original" to CropRect.FULL,
+                                "1:1 Square" to CropRect(0f, 0f, 1f, 1f), // Simplified. A real crop would use target aspect ratio mapping
+                                "16:9" to CropRect(0f, 0.125f, 1f, 0.875f),
+                                "4:3" to CropRect(0.125f, 0f, 0.875f, 1f)
+                            )
+                            crops.forEach { (label, rect) ->
+                                FilterChip(
+                                    selected = proj.cropRect == rect,
+                                    onClick = { viewModel.updateCropRect(rect) },
+                                    label = { Text(label) }
+                                )
                             }
                         }
                     }

@@ -117,6 +117,15 @@ class VideoEditorViewModel @Inject constructor(
         _project.update { it?.copy(outputFormat = format) }
     }
 
+    fun updateMuteAudio(mute: Boolean) {
+        _project.update { it?.copy(muteAudio = mute) }
+        player.volume = if (mute) 0f else 1f
+    }
+
+    fun updateCropRect(cropRect: CropRect) {
+        _project.update { it?.copy(cropRect = cropRect) }
+    }
+
     private fun startProgressTracking() {
         progressJob?.cancel()
         progressJob = viewModelScope.launch {

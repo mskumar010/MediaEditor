@@ -43,6 +43,8 @@ fun ConverterScreen(
         viewModel.setInputUri(uri)
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
     if (state is ConverterState.Processing) {
         Box(modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)), contentAlignment = Alignment.Center) {
             HybridCard(modifier = Modifier.width(200.dp)) {
@@ -56,6 +58,7 @@ fun ConverterScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Converter", fontWeight = FontWeight.Bold) },
@@ -192,9 +195,16 @@ fun ConverterScreen(
     }
 
     LaunchedEffect(state) {
-        if (state is ConverterState.Success) {
-            viewModel.resetState()
-            // Optionally show a toast here
+        when (state) {
+            is ConverterState.Success -> {
+                snackbarHostState.showSnackbar("Conversion successful!")
+                viewModel.resetState()
+            }
+            is ConverterState.Error -> {
+                snackbarHostState.showSnackbar("Error: ${(state as ConverterState.Error).message}")
+                viewModel.resetState()
+            }
+            else -> {}
         }
     }
 }
