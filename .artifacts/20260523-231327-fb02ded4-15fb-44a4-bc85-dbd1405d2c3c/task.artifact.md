@@ -1,16 +1,12 @@
 # Task Management
 
-- [ ] Fix Audio Editor Blank Screen
-	- [ ] Update `AudioEditorViewModel` to resolve real path
-	- [ ] Update `WaveformEditor` to use real path and handle OOM constraint
-- [ ] Polish Audio Editor UI
-	- [ ] Add `HybridCard` and `HybridSectionHeader` to `core:ui`
-	- [ ] Add Fade In/Out controls to `AudioEditorScreen`
-	- [ ] Refactor `AudioEditorScreen` with `HybridTheme` components
-- [ ] Implement Video Editor
-	- [ ] Create `VideoEditorModule`, `TrimVideoUseCase`, `VideoEditorViewModel`
-	- [ ] Create `VideoEditorScreen` with preview and controls (Trim, Fade, Crop, Speed)
-	- [ ] Update `AppNavHost` to use the real Video Editor
-- [ ] Verification
-	- [ ] Run `analyze_file` on all modified files
-	- [ ] Use `render_compose_preview` for both editor screens
+- [x] Fix Audio Editor Blank Screen
+	- [x] Update `AudioEditorViewModel` to resolve real path
+	- [x] Update `WaveformEditor` to use real path and handle OOM constraint
+- [x] Polish Audio Editor UI
+	- [x] Add `HybridCard` and `HybridSectionHeader` to `core:ui`
+	- [x] Add Fade In/Out controls to `AudioEditorScreen`
+	- [x] Refactor `AudioEditorScreen` with `HybridTheme` components
+- [x] Verification
+	- [x] Run `analyze_file` on all modified files
+	- [x] Use `render_compose_preview` for `AudioEditorScreen`

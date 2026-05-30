@@ -107,7 +107,8 @@ class VideoEditorViewModel @Inject constructor(
 
     fun updateRotation() {
         _project.update { 
-            val newRotation = (it?.rotation ?: 0 + 90) % 360
+            val currentRotation = it?.rotation ?: 0
+            val newRotation = (currentRotation + 90) % 360
             it?.copy(rotation = newRotation)
         }
     }
@@ -144,19 +145,27 @@ class VideoEditorViewModel @Inject constructor(
                 extension = p.outputFormat.extension
             )
 
-            // Simplification: We'll wrap the project settings into a TrimVideo operation
-            // In a full implementation, we'd handle Crop/Speed/Rotate as combined operations
-            val op = MediaOperation.TrimVideo(
-                inputUri = p.sourceUri,
-                outputUri = outputUri,
-                startMs = p.trimStartMs,
-                endMs = p.trimEndMs,
-                fadeInMs = p.fadeInMs,
-                fadeOutMs = p.fadeOutMs
-            )
+            // Media3 Transformer MUST start on Main thread.
+            // Explicitly using Dispatchers.Main here as per GEMINI.md constraints.
+            val result = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                // Simplification: We'll wrap the project settings into a TrimVideo operation
+                // In a full implementation, we'd handle Crop/Speed/Rotate as combined operations
+                val op = MediaOperation.TrimVideo(
+                    inputUri = p.sourceUri,
+                    outputUri = outputUri,
+                    startMs = p.trimStartMs,
+                    endMs = p.trimEndMs,
+                    fadeInMs = p.fadeInMs,
+                    fadeOutMs = p.fadeOutMs,
+                    speed = p.speed,
+                    rotation = p.rotation,
+                    cropRect = p.cropRect,
+                    muteAudio = p.muteAudio
+                )
 
-            val result = processingRouter.execute(op) { progress ->
-                _exportState.value = ExportState.Exporting(progress.percent)
+                processingRouter.execute(op) { progress ->
+                    _exportState.value = ExportState.Exporting(progress.percent)
+                }
             }
 
             when (result) {
@@ -187,8 +196,8 @@ class VideoEditorViewModel @Inject constructor(
 }
 
 sealed class ExportState {
-    object Idle : ExportState()
+    data object Idle : ExportState()
     data class Exporting(val progress: Int) : ExportState()
-    object Success : ExportState()
+    data object Success : ExportState()
     data class Error(val message: String) : ExportState()
 }

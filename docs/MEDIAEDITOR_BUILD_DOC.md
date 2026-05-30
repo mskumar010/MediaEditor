@@ -2,6 +2,10 @@
 > From zero to MVP to final. For vibe-coding / AI-assisted development.
 > GPL v3 · Kotlin · Jetpack Compose · Material 3 · Offline · F-Droid ready
 
+**CRITICAL RULE:** Do NOT use any deprecated libraries, APIs, or components. Always check for deprecation status before using them in the codebase.
+
+**CRITICAL RULE 2:** Ensure strict compatibility for all Gradle packages, libraries, and components downloaded or imported. They must be stable versions that do not cause build conflicts or future compatibility issues.
+
 ---
 
 ## TABLE OF CONTENTS
@@ -29,15 +33,15 @@
 ## 1. PROJECT IDENTITY
 
 ```
-App name:       [YOU PICK — placeholder: "CutFlow"]
-Package:        com.yourname.cutflow
+App name:       [YOU PICK — placeholder: "Media Editor"]
+Package:        com.mediaeditor
 Min SDK:        23 (Android 6.0)
 Target SDK:     35 (Android 15)
 Compile SDK:    35
 Language:       Kotlin 2.x
 UI:             Jetpack Compose + Material 3
 License:        GPL v3
-Repo:           github.com/yourname/cutflow
+Repo:           github.com/yourname/mediaeditor
 Distribution:   F-Droid + GitHub Releases
 Internet:       NONE — zero network permission
 ```
@@ -297,10 +301,10 @@ dependencyResolutionManagement {
 ### core domain models (shared across features)
 
 ```kotlin
-// core/router/src/main/kotlin/com/yourname/cutflow/core/router/ProcessingEngine.kt
+// core/router/src/main/kotlin/com/mediaeditor/core/router/ProcessingEngine.kt
 enum class ProcessingEngine { TRANSFORMER, FFMPEG }
 
-// core/router/src/main/kotlin/com/yourname/cutflow/core/router/MediaOperation.kt
+// core/router/src/main/kotlin/com/mediaeditor/core/router/MediaOperation.kt
 sealed class MediaOperation {
     data class TrimAudio(
         val inputUri: Uri,
@@ -1490,7 +1494,7 @@ private fun handleIntent(intent: Intent) {
 All-in-one audio and video editor. Trim, crop, convert, fade. No ads. No internet.
 
 # fastlane/metadata/android/en-US/full_description.txt
-CutFlow is a free, open-source media editor for Android.
+Media Editor is a free, open-source media editor for Android.
 
 Features:
 • Audio editor with waveform visualization, trim, fade, normalize
@@ -1539,7 +1543,7 @@ jobs:
 ### 13.2 F-Droid submission checklist
 - [ ] All dependencies in `libs.versions.toml`, reproducible build
 - [ ] No proprietary SDK, no analytics, no Firebase
-- [ ] `fdroid/metadata/com.yourname.cutflow.yml` in repo
+- [ ] `fdroid/metadata/com.mediaeditor.yml` in repo
 - [ ] Screenshots in `fastlane/metadata/android/en-US/images/phoneScreenshots/`
 - [ ] Build is reproducible (same inputs → same APK)
 - [ ] ProGuard/R8 rules don't break FFmpeg JNI

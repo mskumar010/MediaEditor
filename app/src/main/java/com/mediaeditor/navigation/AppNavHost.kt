@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.mediaeditor.presentation.HomeScreen
 import com.mediaeditor.navigation.stubs.*
 
 @Composable
@@ -19,7 +20,10 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("uri") { type = NavType.StringType; nullable = true })
         ) { backStack ->
             val uri = backStack.arguments?.getString("uri")?.let { Uri.parse(it) }
-            AudioEditorScreen(uri = uri, navController = navController)
+            com.mediaeditor.feature.audioeditor.presentation.AudioEditorScreen(
+                uri = uri,
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         
         composable(
@@ -27,11 +31,22 @@ fun AppNavHost(navController: NavHostController) {
             arguments = listOf(navArgument("uri") { type = NavType.StringType; nullable = true })
         ) { backStack ->
             val uri = backStack.arguments?.getString("uri")?.let { Uri.parse(it) }
-            VideoEditorScreen(uri = uri, navController = navController)
+            com.mediaeditor.feature.videoeditor.presentation.VideoEditorScreen(
+                uri = uri,
+                onNavigateBack = { navController.popBackStack() }
+            )
         }
         
-        composable(Screen.Converter.route) { ConverterScreen(navController) }
-        composable(Screen.Batch.route) { BatchScreen(navController) }
-        composable(Screen.Settings.route) { SettingsScreen(navController) }
+        composable(Screen.Converter.route) { 
+            com.mediaeditor.feature.converter.presentation.ConverterScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.Batch.route) { 
+            com.mediaeditor.feature.batch.presentation.BatchScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
+        composable(Screen.Preferences.route) { SettingsScreen(navController) }
     }
 }

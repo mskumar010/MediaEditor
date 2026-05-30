@@ -58,7 +58,7 @@ fun HomeScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("CutFlow", fontWeight = FontWeight.Bold) }
+                title = { Text("Media Editor", fontWeight = FontWeight.Bold) }
             )
         }
     ) { padding ->

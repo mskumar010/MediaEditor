@@ -12,5 +12,5 @@ sealed class Screen(val route: String) {
     }
     object Converter     : Screen("converter")
     object Batch         : Screen("batch")
-    object Settings      : Screen("settings")
+    object Preferences   : Screen("preferences")
 }
