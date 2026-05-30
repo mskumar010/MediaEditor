@@ -30,6 +30,19 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+    
+    // Preferences DataStore
+    implementation(libs.datastore.preferences)
+    
+    // Core Dependencies
+    implementation(project(":core:ui"))
+    implementation(project(":core:router"))
+
+    // Hilt Navigation Compose
+    implementation(libs.hilt.navigation.compose)
+
+    // Material Icons Extended
+    implementation(libs.compose.material.icons)
 }
 
 

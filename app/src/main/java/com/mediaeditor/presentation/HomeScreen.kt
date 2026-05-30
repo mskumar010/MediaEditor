@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AudioFile
+import androidx.compose.material.icons.filled.Queue
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Transform
 import androidx.compose.material.icons.filled.VideoFile
 import androidx.compose.material3.*
@@ -58,7 +60,12 @@ fun HomeScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Media Editor", fontWeight = FontWeight.Bold) }
+                title = { Text("Media Editor", fontWeight = FontWeight.Bold) },
+                actions = {
+                    IconButton(onClick = { navController.navigate(Screen.Preferences.route) }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Preferences")
+                    }
+                }
             )
         }
     ) { padding ->
@@ -88,9 +95,17 @@ fun HomeScreen(navController: NavHostController) {
             item {
                 FeatureCard(
                     title = "Converter",
-                    subtitle = "Format Conversion & Batch",
+                    subtitle = "Format Conversion",
                     icon = Icons.Default.Transform,
                     onClick = { navController.navigate(Screen.Converter.route) }
+                )
+            }
+            item {
+                FeatureCard(
+                    title = "Batch Processing",
+                    subtitle = "Queue & process multiple files",
+                    icon = Icons.Default.Queue,
+                    onClick = { navController.navigate(Screen.Batch.route) }
                 )
             }
         }

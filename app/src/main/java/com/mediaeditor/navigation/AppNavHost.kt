@@ -47,6 +47,10 @@ fun AppNavHost(navController: NavHostController) {
                 onNavigateBack = { navController.popBackStack() }
             )
         }
-        composable(Screen.Preferences.route) { SettingsScreen(navController) }
+        composable(Screen.Preferences.route) { 
+            com.mediaeditor.feature.settings.presentation.PreferencesScreen(
+                onNavigateBack = { navController.popBackStack() }
+            )
+        }
     }
 }
