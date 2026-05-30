@@ -44,7 +44,5 @@ class ProcessingRouter @Inject constructor(
         is MediaOperation.CropVideo    -> ProcessingEngine.TRANSFORMER
         is MediaOperation.ChangeSpeed  -> ProcessingEngine.TRANSFORMER
         is MediaOperation.MergeVideo   -> ProcessingEngine.TRANSFORMER
-
-        is MediaOperation.BatchOperation -> ProcessingEngine.FFMPEG // batches go through FFmpeg queue
     }
 }

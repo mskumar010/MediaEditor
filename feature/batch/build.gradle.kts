@@ -38,6 +38,7 @@ dependencies {
     implementation(project(":core:queue"))
     implementation(project(":core:ui"))
     implementation(project(":core:router"))
+    implementation(project(":core:storage"))
 }
 
 

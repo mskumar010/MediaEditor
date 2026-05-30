@@ -80,8 +80,4 @@ sealed class MediaOperation {
         val outputUri: Uri,
         val timestampMs: Long
     ) : MediaOperation()
-
-    data class BatchOperation(
-        val operations: List<MediaOperation>
-    ) : MediaOperation()
 }

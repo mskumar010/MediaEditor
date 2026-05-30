@@ -59,16 +59,41 @@ object MediaOperationSerializer {
                 json.put("fadeInMs", operation.fadeInMs)
                 json.put("fadeOutMs", operation.fadeOutMs)
             }
-            is MediaOperation.BatchOperation -> {
-                json.put("type", "BatchOperation")
+            is MediaOperation.MergeAudio -> {
+                json.put("type", "MergeAudio")
+                json.put("outputUri", operation.outputUri.toString())
+                json.put("outputFormat", operation.outputFormat.name)
                 val array = JSONArray()
-                operation.operations.forEach { op ->
-                    array.put(JSONObject(serialize(op)))
-                }
-                json.put("operations", array)
+                operation.inputUris.forEach { array.put(it.toString()) }
+                json.put("inputUris", array)
             }
-            else -> {
-                json.put("type", "Unknown")
+            is MediaOperation.MergeVideo -> {
+                json.put("type", "MergeVideo")
+                json.put("outputUri", operation.outputUri.toString())
+                val array = JSONArray()
+                operation.inputUris.forEach { array.put(it.toString()) }
+                json.put("inputUris", array)
+            }
+            is MediaOperation.CropVideo -> {
+                json.put("type", "CropVideo")
+                json.put("inputUri", operation.inputUri.toString())
+                json.put("outputUri", operation.outputUri.toString())
+                json.put("left", operation.left)
+                json.put("top", operation.top)
+                json.put("right", operation.right)
+                json.put("bottom", operation.bottom)
+            }
+            is MediaOperation.ChangeSpeed -> {
+                json.put("type", "ChangeSpeed")
+                json.put("inputUri", operation.inputUri.toString())
+                json.put("outputUri", operation.outputUri.toString())
+                json.put("speed", operation.speed)
+            }
+            is MediaOperation.ExtractFrame -> {
+                json.put("type", "ExtractFrame")
+                json.put("inputUri", operation.inputUri.toString())
+                json.put("outputUri", operation.outputUri.toString())
+                json.put("timestampMs", operation.timestampMs)
             }
         }
         return json.toString()
@@ -120,14 +145,7 @@ object MediaOperationSerializer {
                     fadeInMs = json.getLong("fadeInMs"),
                     fadeOutMs = json.getLong("fadeOutMs")
                 )
-                "BatchOperation" -> {
-                    val ops = mutableListOf<MediaOperation>()
-                    val array = json.getJSONArray("operations")
-                    for (i in 0 until array.length()) {
-                        deserialize(array.getJSONObject(i).toString())?.let { ops.add(it) }
-                    }
-                    MediaOperation.BatchOperation(ops)
-                }
+                "BatchOperation" -> null // Deprecated; batching handled by WorkManager
                 else -> null
             }
         } catch (e: Exception) {
