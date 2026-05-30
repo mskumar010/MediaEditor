@@ -85,7 +85,7 @@ fun AudioEditorScreen(
                 HybridSectionHeader(title = "Waveform & Trim")
                 HybridCard(modifier = Modifier.padding(horizontal = 16.dp)) {
                     WaveformEditor(
-                        sourcePath = proj.sourcePath,
+                        amplitudes = proj.amplitudes,
                         trimStartMs = proj.trimStartMs,
                         trimEndMs = proj.trimEndMs,
                         totalDurationMs = proj.durationMs,

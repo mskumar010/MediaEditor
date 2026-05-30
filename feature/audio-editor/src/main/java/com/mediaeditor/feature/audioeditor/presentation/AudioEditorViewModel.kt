@@ -11,6 +11,7 @@ import com.mediaeditor.core.router.AudioProject
 import com.mediaeditor.core.router.MediaOperation
 import com.mediaeditor.core.router.OperationResult
 import com.mediaeditor.core.storage.StorageManager
+import com.mediaeditor.core.waveform.AmplitudaEngine
 import com.mediaeditor.feature.audioeditor.domain.usecase.GetAudioMetadataUseCase
 import com.mediaeditor.feature.audioeditor.domain.usecase.TrimAudioUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +30,8 @@ class AudioEditorViewModel @Inject constructor(
     val player: ExoPlayer,
     private val trimAudioUseCase: TrimAudioUseCase,
     private val getAudioMetadataUseCase: GetAudioMetadataUseCase,
-    private val storageManager: StorageManager
+    private val storageManager: StorageManager,
+    private val amplitudaEngine: AmplitudaEngine
 ) : ViewModel() {
 
     private val _project = MutableStateFlow<AudioProject?>(null)
@@ -68,7 +70,7 @@ class AudioEditorViewModel @Inject constructor(
     fun loadAudio(uri: Uri) {
         viewModelScope.launch {
             val metadata = getAudioMetadataUseCase(uri)
-            val realPath = storageManager.getRealPath(uri)
+            val realPath = storageManager.getRealPath(uri) ?: ""
             _project.value = AudioProject(
                 sourceUri = uri,
                 sourcePath = realPath,
@@ -80,6 +82,14 @@ class AudioEditorViewModel @Inject constructor(
             val mediaItem = MediaItem.fromUri(uri)
             player.setMediaItem(mediaItem)
             player.prepare()
+
+            // Fetch amplitudes via the AmplitudaEngine (off the main thread natively)
+            if (realPath.isNotEmpty()) {
+                val result = amplitudaEngine.extractAmplitudes(realPath)
+                result.onSuccess { amps ->
+                    _project.update { it?.copy(amplitudes = amps) }
+                }
+            }
         }
     }
 

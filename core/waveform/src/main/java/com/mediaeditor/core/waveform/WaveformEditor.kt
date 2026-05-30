@@ -28,7 +28,7 @@ import java.io.File
 
 @Composable
 fun WaveformEditor(
-    sourcePath: String?,
+    amplitudes: List<Int>,
     trimStartMs: Long,
     trimEndMs: Long,
     totalDurationMs: Long,
@@ -40,31 +40,6 @@ fun WaveformEditor(
     onSeek: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    var amplitudes by remember { mutableStateOf<List<Int>>(emptyList()) }
-
-    LaunchedEffect(sourcePath) {
-        if (sourcePath == null) return@LaunchedEffect
-        withContext(Dispatchers.IO) {
-            val file = File(sourcePath)
-            if (!file.exists()) return@withContext
-            
-            val amplituda = Amplituda(context)
-            val isLargeFile = file.length() > 100 * 1024 * 1024
-            
-            val request = if (isLargeFile) {
-                amplituda.processAudio(sourcePath, Compress.withParams(Compress.AVERAGE, 500))
-            } else {
-                amplituda.processAudio(sourcePath, Compress.withParams(Compress.AVERAGE, 100))
-            }
-
-            request.get({ data ->
-                    amplitudes = data.amplitudesAsList()
-                }, {
-                    // Ignore errors for now
-                })
-        }
-    }
 
     val primaryColor = MaterialTheme.colorScheme.primary
     val trackColor = MaterialTheme.colorScheme.surfaceVariant

@@ -12,7 +12,8 @@ data class AudioProject(
     val fadeOutMs: Long = 0,
     val volume: Float = 1.0f,
     val outputFormat: AudioFormat = AudioFormat.AAC,
-    val playbackPositionMs: Long = 0
+    val playbackPositionMs: Long = 0,
+    val amplitudes: List<Int> = emptyList()
 )
 
 data class VideoProject(

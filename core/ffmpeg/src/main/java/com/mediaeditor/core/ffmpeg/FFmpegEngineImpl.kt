@@ -47,8 +47,18 @@ class FFmpegEngineImpl @Inject constructor(
         operation: MediaOperation,
         onProgress: (OperationResult.Progress) -> Unit
     ): OperationResult = withContext(Dispatchers.IO) {
+        val outputUri = when (operation) {
+            is MediaOperation.TrimAudio -> operation.outputUri
+            is MediaOperation.ConvertAudio -> operation.outputUri
+            is MediaOperation.ExtractAudio -> operation.outputUri
+            is MediaOperation.MergeAudio -> operation.outputUri
+            is MediaOperation.TrimVideo -> operation.outputUri
+            is MediaOperation.ConvertVideo -> operation.outputUri
+            is MediaOperation.ExtractFrame -> operation.outputUri
+            else -> throw UnsupportedOperationException("Operation not handled by FFmpeg: $operation")
+        }
         val cmd = buildCommand(operation)
-        runFFmpeg(cmd, onProgress)
+        runFFmpeg(cmd, outputUri, onProgress)
     }
 
     private fun buildCommand(operation: MediaOperation): String = when (operation) {
@@ -168,6 +178,7 @@ class FFmpegEngineImpl @Inject constructor(
 
     private suspend fun runFFmpeg(
         command: String,
+        outputUri: Uri,
         onProgress: (OperationResult.Progress) -> Unit
     ): OperationResult = suspendCancellableCoroutine { continuation ->
         
@@ -189,13 +200,16 @@ class FFmpegEngineImpl @Inject constructor(
 
                 override fun onSuccess(output: String?) {
                     if (continuation.isActive) {
-                        continuation.resume(OperationResult.Success(Uri.EMPTY, 0L))
+                        continuation.resume(OperationResult.Success(outputUri, 0L))
                     }
                 }
 
                 override fun onFailure(error: String) {
                     if (continuation.isActive) {
-                        continuation.resume(OperationResult.Failure(error))
+                        val userReadableError = error.split('\n')
+                            .lastOrNull { it.contains("Error", ignoreCase = true) || it.contains("Invalid", ignoreCase = true) }
+                            ?.trim() ?: "FFmpeg conversion failed"
+                        continuation.resume(OperationResult.Failure(userReadableError))
                     }
                 }
 

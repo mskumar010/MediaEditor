@@ -58,16 +58,18 @@ class StorageManager @Inject constructor(
 
         val outputUri = context.contentResolver.insert(collection, values) ?: return null
 
-        context.contentResolver.openOutputStream(outputUri)?.use { out ->
-            context.contentResolver.openInputStream(sourceUri)?.use { input ->
-                input.copyTo(out)
+        try {
+            context.contentResolver.openOutputStream(outputUri)?.use { out ->
+                context.contentResolver.openInputStream(sourceUri)?.use { input ->
+                    input.copyTo(out)
+                }
             }
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            values.clear()
-            values.put(MediaStore.MediaColumns.IS_PENDING, 0)
-            context.contentResolver.update(outputUri, values, null, null)
+        } finally {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                values.clear()
+                values.put(MediaStore.MediaColumns.IS_PENDING, 0)
+                context.contentResolver.update(outputUri, values, null, null)
+            }
         }
         return outputUri
     }
